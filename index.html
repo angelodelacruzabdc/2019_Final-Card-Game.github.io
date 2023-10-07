@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset ="utf-8">
+		<title>Yu-Gi-Oh Memory Card Game</title>
+		<link href="https://fonts.googleapis.com/css?family=Playfair+Display|Roboto+Slab" rel="stylesheet">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+		<script src="projectscript.js" async></script>
+		<style>
+			*{
+				box-sizing: border-box;
+			}
+			html{
+				min-height: 100vh;
+			}
+			
+			body{
+				margin: 0;
+				background: url('bg-homepage.gif') no-repeat center center fixed;
+				-webkit-background-size: cover;
+				-moz-background-size: cover;
+				-o-background-size: cover;
+				background-size: cover;
+			}
+			.game-title{
+				font-family: 'Roboto Slab', sans-serif;
+				text-align: center;
+				font-size: 4em;
+				color: #FF7F14;
+			}
+			.back2page{
+				text-align: center;
+			}
+			.game-info-container{
+				grid-column: 1/-1;
+				display: flex;
+				justify-content: space-between;
+			}
+			.game-info{
+				font-family: 'Playfair Display', sans-serif;
+				text-align: center;
+				font-size: 2em;
+				color: #FF7F14;
+			}
+			.game-container{
+				display: grid;
+				grid-template-columns: repeat(6, auto);
+				grid-gap: 10px;
+				margin: 50px;
+				justify-content: center;
+				perspective: 500px;
+			}
+			.card{
+				position: relative;
+				height: 175px;
+				width: 125px;
+				border-radius: 6px;
+			}
+			.card-face{
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				overflow: hidden;
+				backface-visibility: hidden;
+				border-radius: 6px;
+				border: 1px solid black;
+				transition: transform 500ms ease-in-out;
+			}
+			.card.visible .card-back{
+				transform: rotateY(-180deg);
+			}
+			.card.visible .card-front{
+				transform: rotateY(0);
+			}
+			.overlay-text{
+				display: none;
+				position: fixed;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				justify-content: center;
+				align-items: center;
+				z-index: 100;
+				color: #FF7F14;
+				font-family: 'Playfair Display', serif;	
+			}
+			.overlay-text-small{
+				font-size: 0.3em;
+			} 
+			.overlay-text.visible{
+				display: flex;
+				flex-direction: column;
+				animation: overlay-grow 500ms forwards;
+			}
+			@keyframes overlay-grow{
+				from{
+					background-color: rgba(0,0,0,0);
+					font-size: 0;
+				}
+				to{
+					background-color: rgba(0,0,0,0.8);
+					font-size: 10em;
+					
+				}
+			}
+			.card-back{
+				background-color: black;
+				border-color: white;
+			}
+			.card-front{
+				background-color: white;
+				border-color: black;
+				transform: rotateY(180deg);
+			}
+			.card-value{
+				width: 125px;
+				height: 175px;
+			}
+			.card-front:hover .card-value{
+				transform: scale(1);
+			}
+			.polymerization{
+				width: 125px;
+				height: 175px;
+				z-index: 333;
+			}
+			a{
+				text-decoration: none;
+				font-family: 'Roboto Slab', sans-serif;
+				font-size: 1em;
+				color: #FF7F14;
+			}
+			#playerForm{
+				color: black;
+				font-family: 'Playfair Display', sans-serif;
+				text-align: center;
+			}
+			
+		</style>
+	</head>
+	<body>
+		<h1 class="game-title">Legendary Game of Memory</h1>
+		<h1 class="back2page"><a href="project.html">Go Back to Homepage</a></h1>
+		<div id="playerForm">
+			<form onsubmit="return false" id="playerForm">
+				Player <span id="span1">1</span> Name:
+				<input type= "text" id ="name">
+				Player <span id="span2">1</span> Age:
+					<input type= "number" id ="age">
+				Player <span id="span3">1</span> Section:
+					<input type= "text" id ="section">
+				<button type="submit"> Enter </button>
+			</form>
+		</div>
+		<div class="overlay-text visible">
+			Click to Start
+		</div>
+		<div id="game-over-text" class="overlay-text">
+			GAME OVER
+			<span class="overlay-text-small">Click to Restart</span>
+		</div>
+		<div id="victory-text" class="overlay-text">
+			VICTORY
+			<span class="overlay-text-small">Click to Restart</span>
+		</div>
+		<div class="game-container">
+			<div class="game-info-container">
+				<div class="game-info">
+					Time Left: <span id="time-remaining">600</span> 
+				</div>
+				<div class="game-info">
+					
+				</div>
+				<div class="game-info">
+					Flips Made: <span id="flips-made">0</span> 
+				</div>
+			</div>
+			<div class="card">
+				<div class="card-back card-face">
+					<img class="polymerization" src="cardback.jpg"></img>
+				</div>
+				<div class="card-front card-face">
+					<img class="card-value" src="card4.jpg"></img>
+				</div>
+			</div>
+			<div class="card"><div class="card-back card-face">
+					<img class="polymerization" src="cardback.jpg"></img>
+				</div>
+				<div class="card-front card-face">
+					<img class="card-value" src="card3.jpg"></img>
+				</div>
+			</div>
+			<div class="card">
+				<div class="card-back card-face">
+					<img class="polymerization" src="cardback.jpg"></img>
+				</div>
+				<div class="card-front card-face">
+					<img class="card-value" src="card7.jpg"></img>
+				</div>
+			</div>
+			<div class="card">
+				<div class="card-back card-face">
+					<img class="polymerization" src="cardback.jpg"></img>
+				</div>
+				<div class="card-front card-face">
+					<img class="card-value" src="card22.jpg"></img>
+				</div>
+			</div>
+			<div class="card">
+				<div class="card-back card-face">
+					<img class="polymerization" src="cardback.jpg"></img>
+				</div>
+				<div class="card-front card-face">
+					<img class="card-value" src="card20.jpg"></img>
+				</div>
+			</div>
+			<div class="card">
+				<div class="card-back card-face">
+					<img class="polymerization" src="cardback.jpg"></img>
+				</div>
+				<div class="card-front card-face">
+					<img class="card-value" src="card19.jpg"></img>
+				</div>
+			</div>
+			<div class="card">
+				<div class="card-back card-face">
+					<img class="polymerization" src="cardback.jpg"></img>
+				</div>
+				<div class="card-front card-face">
+					<img class="card-value" src="card33.jpg"></img>
+				</div>
+			</div>
+			<div class="card">
+				<div class="card-back card-face">
+					<img class="polymerization" src="cardback.jpg"></img>
+				</div>
+				<div class="card-front card-face">
+					<img class="card-value" src="card31.jpg"></img>
+				</div>
+			</div>
+			<div class="card">
+				<div class="card-back card-face">
+					<img class="polymerization" src="cardback.jpg"></img>
+				</div>
+				<div class="card-front card-face">
+					<img class="card-value" src="card27.jpg"></img>
+				</div>
+			</div>
+			<div class="card">
+				<div class="card-back card-face">
+					<img class="polymerization" src="cardback.jpg"></img>
+				</div>
+				<div class="card-front card-face">
+					<img class="card-value" src="card12.jpg"></img>
+				</div>
+			</div>
+			<div class="card">
+				<div class="card-back card-face">
+					<img class="polymerization" src="cardback.jpg"></img>
+				</div>
+				<div class="card-front card-face">
+					<img class="card-value" src="card24.jpg"></img>
+				</div>
+			</div>
+			<div class="card">
+				<div class="card-back card-face">
+					<img class="polymerization" src="cardback.jpg"></img>
+				</div>
+				<div class="card-front card-face">
+					<img class="card-value" src="card36.jpg"></img>
+				</div>
+			</div>
+			<div class="card">
+				<div class="card-back card-face">
+					<img class="polymerization" src="cardback.jpg"></img>
+				</div>
+				<div class="card-front card-face">
+					<img class="card-value" src="card4.jpg"></img>
+				</div>
+			</div>
+			<div class="card"><div class="card-back card-face">
+					<img class="polymerization" src="cardback.jpg"></img>
+				</div>
+				<div class="card-front card-face">
+					<img class="card-value" src="card3.jpg"></img>
+				</div>
+			</div>
+			<div class="card">
+				<div class="card-back card-face">
+					<img class="polymerization" src="cardback.jpg"></img>
+				</div>
+				<div class="card-front card-face">
+					<img class="card-value" src="card7.jpg"></img>
+				</div>
+			</div>
+			<div class="card">
+				<div class="card-back card-face">
+					<img class="polymerization" src="cardback.jpg"></img>
+				</div>
+				<div class="card-front card-face">
+					<img class="card-value" src="card22.jpg"></img>
+				</div>
+			</div>
+			<div class="card">
+				<div class="card-back card-face">
+					<img class="polymerization" src="cardback.jpg"></img>
+				</div>
+				<div class="card-front card-face">
+					<img class="card-value" src="card20.jpg"></img>
+				</div>
+			</div>
+			<div class="card">
+				<div class="card-back card-face">
+					<img class="polymerization" src="cardback.jpg"></img>
+				</div>
+				<div class="card-front card-face">
+					<img class="card-value" src="card19.jpg"></img>
+				</div>
+			</div>
+			<div class="card">
+				<div class="card-back card-face">
+					<img class="polymerization" src="cardback.jpg"></img>
+				</div>
+				<div class="card-front card-face">
+					<img class="card-value" src="card33.jpg"></img>
+				</div>
+			</div>
+			<div class="card">
+				<div class="card-back card-face">
+					<img class="polymerization" src="cardback.jpg"></img>
+				</div>
+				<div class="card-front card-face">
+					<img class="card-value" src="card31.jpg"></img>
+				</div>
+			</div>
+			<div class="card">
+				<div class="card-back card-face">
+					<img class="polymerization" src="cardback.jpg"></img>
+				</div>
+				<div class="card-front card-face">
+					<img class="card-value" src="card27.jpg"></img>
+				</div>
+			</div>
+			<div class="card">
+				<div class="card-back card-face">
+					<img class="polymerization" src="cardback.jpg"></img>
+				</div>
+				<div class="card-front card-face">
+					<img class="card-value" src="card12.jpg"></img>
+				</div>
+			</div>
+			<div class="card">
+				<div class="card-back card-face">
+					<img class="polymerization" src="cardback.jpg"></img>
+				</div>
+				<div class="card-front card-face">
+					<img class="card-value" src="card24.jpg"></img>
+				</div>
+			</div>
+			<div class="card">
+				<div class="card-back card-face">
+					<img class="polymerization" src="cardback.jpg"></img>
+				</div>
+				<div class="card-front card-face">
+					<img class="card-value" src="card36.jpg"></img>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
